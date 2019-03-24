@@ -93,7 +93,7 @@ class Profile extends Component {
             </ListItem>
             <ListItem
               onPress={() => {
-                this.props.navigation.navigate("Login");
+                this.props.navigation.navigate("Welcome");
               }}
             >
               <Left>

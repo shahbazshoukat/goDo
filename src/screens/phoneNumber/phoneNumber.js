@@ -3,18 +3,53 @@ import { View, StyleSheet, TextInput } from "react-native";
 import { Text, Button, Icon, Content } from "native-base";
 import { priColor } from "./../../../app.json";
 import { secColor } from "./../../../app.json";
+import Error from "./../../components/error/error";
 class PhoneNumber extends Component {
   static navigationOptions = {
-    header: null
+    header: null,
+    phoneNumber: "",
+    phoneNumberError: false,
+    errorMessage: ""
   };
   constructor(props) {
     super(props);
     this.state = {};
   }
   submitHandler = () => {
-    this.props.navigation.navigate("OTP");
+    phone = /^\d{11}$/;
+    if (phone.test(this.state.phoneNumber)) {
+      this.setState({
+        phoneNumberError: false
+      });
+      this.props.navigation.navigate("OTP");
+    } else {
+      this.setState({
+        phoneNumberError: true,
+        errorMessage: "Phone Number can't be empty!"
+      });
+    }
+  };
+  phoneNumberHandler = phoneNumber => {
+    phone = /^\d{11}$/;
+    this.setState({
+      phoneNumber
+    });
+    if (phone.test(phoneNumber)) {
+      this.setState({
+        phoneNumberError: false
+      });
+    } else {
+      this.setState({
+        phoneNumberError: true,
+        errorMessage: "Enter a valid Phone Number!"
+      });
+    }
   };
   render() {
+    let error = null;
+    if (this.state.phoneNumberError) {
+      error = <Error message={this.state.errorMessage} />;
+    }
     return (
       <Content>
         <View style={styles.container}>
@@ -37,8 +72,13 @@ class PhoneNumber extends Component {
                 placeholder="Phone Number(03xxxxxxxxx)"
                 keyboardType="phone-pad"
                 maxLength={11}
+                value={this.state.phoneNumber}
+                onChangeText={phoneNumber => {
+                  this.phoneNumberHandler(phoneNumber);
+                }}
               />
             </View>
+            {error}
             <View style={styles.loginContainer}>
               <Button style={styles.btnLogin} onPress={this.submitHandler}>
                 <Text style={{ color: "white" }}>Verify Number</Text>

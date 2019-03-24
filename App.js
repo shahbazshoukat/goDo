@@ -23,7 +23,8 @@ import Job from "./src/screens/job/job";
 import Offers from "./src/screens/offers/offers";
 import OfferDetails from "./src/screens/offerDetails/offerDetails";
 import Search from "./src/screens/search/search";
-const App = createStackNavigator(
+import Congratulations from "./src/screens/congratulations/congratulations";
+const Navigator = createStackNavigator(
   {
     Splash: { screen: Splash },
     Welcome: { screen: Welcome },
@@ -42,11 +43,12 @@ const App = createStackNavigator(
     Job: { screen: Job },
     Offers: { screen: Offers },
     OfferDetails: { screen: OfferDetails },
-    Search: { screen: Search }
+    Search: { screen: Search },
+    Congratulations: { screen: Congratulations }
   },
   {
     initialRouteName: "Splash"
   }
 );
 
-export default createAppContainer(App);
+export default createAppContainer(Navigator);

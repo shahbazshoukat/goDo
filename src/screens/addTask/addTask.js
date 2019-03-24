@@ -13,6 +13,7 @@ import {
 import { StyleSheet, Dimensions, ScrollView, TextInput } from "react-native";
 import { Grid, Col, Row } from "react-native-easy-grid";
 import { priColor, secColor, terColor } from "./../../../app.json";
+import Error from "./../../components/error/error";
 class AddTask extends Component {
   constructor(props) {
     super(props);
@@ -22,7 +23,32 @@ class AddTask extends Component {
       tutor: false,
       health: false,
       plumber: false,
-      clicked: false
+      clicked: false,
+      service: {
+        value: "",
+        valid: false,
+        errorMessage: ""
+      },
+      title: {
+        value: "",
+        valid: false,
+        errorMessage: ""
+      },
+      budget: {
+        value: "",
+        valid: false,
+        errorMessage: ""
+      },
+      description: {
+        value: "",
+        valid: false,
+        errorMessage: ""
+      },
+      location: {
+        value: "",
+        valid: false,
+        errorMessage: ""
+      }
     };
   }
 
@@ -33,7 +59,11 @@ class AddTask extends Component {
       tutor: false,
       health: false,
       plumber: false,
-      clicked: !this.state.handyMan
+      clicked: !this.state.handyMan,
+      service: {
+        valid: !this.state.handyMan,
+        errorMessage: "Select a service!"
+      }
     });
   };
 
@@ -44,7 +74,11 @@ class AddTask extends Component {
       tutor: false,
       health: false,
       plumber: false,
-      clicked: !this.state.paint
+      clicked: !this.state.paint,
+      service: {
+        valid: !this.state.paint,
+        errorMessage: "Select a service!"
+      }
     });
   };
 
@@ -55,7 +89,11 @@ class AddTask extends Component {
       tutor: this.state.tutor ? false : true,
       health: false,
       plumber: false,
-      clicked: !this.state.tutor
+      clicked: !this.state.tutor,
+      service: {
+        valid: !this.state.tutor,
+        errorMessage: "Select a service!"
+      }
     });
   };
 
@@ -66,7 +104,11 @@ class AddTask extends Component {
       tutor: false,
       health: this.state.health ? false : true,
       plumber: false,
-      clicked: !this.state.health
+      clicked: !this.state.health,
+      service: {
+        valid: !this.state.health,
+        errorMessage: "Select a service!"
+      }
     });
   };
 
@@ -77,18 +119,205 @@ class AddTask extends Component {
       tutor: false,
       health: false,
       plumber: this.state.plumber ? false : true,
-      clicked: !this.state.plumber
+      clicked: !this.state.plumber,
+      service: {
+        valid: !this.state.plumber,
+        errorMessage: "Select a service!"
+      }
     });
+  };
+
+  serviceHandler = () => {
+    var service = "";
+    if (this.state.handyMan) {
+      service = "handyMan";
+    } else if (this.state.paint) {
+      service = "paint";
+    } else if (this.state.tutor) {
+      service = "tutor";
+    } else if (this.state.health) {
+      service = "health";
+    } else if (this.state.plumber) {
+      service = "plumber";
+    }
+
+    if (service == "") {
+      this.setState({
+        service: {
+          valid: false,
+          value: service,
+          errorMessage: "Select a service!"
+        }
+      });
+    } else {
+      this.setState({
+        service: {
+          valid: true,
+          value: service
+        }
+      });
+    }
+  };
+
+  titleHandler = val => {
+    regex = /^[a-zA-Z0-9 ]+$/;
+    this.setState({
+      title: {
+        value: val
+      }
+    });
+
+    if (regex.test(val)) {
+      this.setState({
+        title: {
+          valid: true,
+          value: val
+        }
+      });
+    } else {
+      this.setState({
+        title: {
+          valid: false,
+          errorMessage: "Enter a valid title!",
+          value: val
+        }
+      });
+    }
+  };
+
+  budgetHandler = val => {
+    regex = /^\d{1,6}$/;
+    this.setState({
+      budget: {
+        value: val
+      }
+    });
+
+    if (regex.test(val)) {
+      if (val < 500) {
+        this.setState({
+          budget: {
+            valid: false,
+            value: val,
+            errorMessage: "Minimum budget should be 500!"
+          }
+        });
+      } else {
+        this.setState({
+          budget: {
+            valid: true,
+            value: val
+          }
+        });
+      }
+    } else {
+      this.setState({
+        budget: {
+          valid: false,
+          errorMessage: "Enter a valid budget!",
+          value: val
+        }
+      });
+    }
+  };
+  descriptionHandler = val => {
+    regex = /^[a-zA-Z ]+$/;
+    this.setState({
+      description: {
+        value: val
+      }
+    });
+
+    if (val != "") {
+      this.setState({
+        description: {
+          valid: true,
+          value: val
+        }
+      });
+    } else {
+      this.setState({
+        description: {
+          valid: false,
+          errorMessage: "Description can't be empty!",
+          value: val
+        }
+      });
+    }
+  };
+  locationHandler = val => {};
+
+  submitHandler = () => {
+    this.serviceHandler();
+    if (!this.state.service.valid) {
+      if (this.state.service.value == "") {
+        this.setState({
+          service: {
+            errorMessage: "Select a service!"
+          }
+        });
+      }
+    }
+
+    if (!this.state.title.valid) {
+      if (this.state.title.value == "") {
+        this.setState({
+          title: {
+            errorMessage: "Title can't be empty!"
+          }
+        });
+      }
+    }
+    if (!this.state.budget.valid) {
+      if (this.state.budget.value == "") {
+        this.setState({
+          budget: {
+            errorMessage: "Budget can't be empty!"
+          }
+        });
+      }
+    }
+    if (!this.state.description.valid) {
+      if (this.state.description.value == "") {
+        this.setState({
+          description: {
+            errorMessage: "Description can't be empty!"
+          }
+        });
+      }
+    }
+
+    if (
+      this.state.service.valid &&
+      this.state.title.valid &&
+      this.state.budget.valid &&
+      this.state.description.valid
+    ) {
+      alert("Posted Successfully!");
+    }
   };
 
   render() {
     let subCategoryRow = this.state.clicked ? (
       <Row size={10} style={{ backgroundColor: "red" }} />
     ) : null;
+    let serviceError = this.state.service.valid ? null : (
+      <Error message={this.state.service.errorMessage} />
+    );
+    let titleError = this.state.title.valid ? null : (
+      <Error message={this.state.title.errorMessage} />
+    );
+    let budgetError = this.state.budget.valid ? null : (
+      <Error message={this.state.budget.errorMessage} />
+    );
+    let descriptionError = this.state.description.valid ? null : (
+      <Error message={this.state.description.errorMessage} />
+    );
+
     return (
       <Grid>
         <Row size={20}>
-          <View style={styles.iconContainer}>
+          <View>
             <ScrollView
               horizontal={true}
               contentContainerStyle={styles.iconContainer}
@@ -214,6 +443,7 @@ class AddTask extends Component {
                 </Text>
               </View>
             </ScrollView>
+            {serviceError}
           </View>
         </Row>
         <Row size={80} style={styles.formContainer}>
@@ -224,22 +454,49 @@ class AddTask extends Component {
                   <TextInput
                     style={{ width: "100%" }}
                     placeholder="Title(e.g.,I want to paint my house)"
+                    maxLength={50}
+                    onChangeText={text => {
+                      this.titleHandler(text);
+                    }}
                   />
                 </Item>
+                {titleError}
                 <Item regular bordered style={styles.inputContainer}>
                   <TextInput
                     style={{ width: "100%" }}
                     placeholder="Budget(e.g.,500)"
+                    maxLength={6}
+                    onChangeText={text => {
+                      this.budgetHandler(text);
+                    }}
                   />
                 </Item>
-
+                {budgetError}
                 <Item regular bordered style={styles.inputContainer}>
                   <Textarea
                     rowSpan={5}
                     placeholder="Description"
                     style={{ width: "100%" }}
+                    onChangeText={text => {
+                      this.descriptionHandler(text);
+                    }}
                   />
                 </Item>
+                {descriptionError}
+                <View style={styles.locationContainer}>
+                  <Button light style={styles.locationBtn}>
+                    <Text>Location</Text>
+                  </Button>
+                </View>
+                <View style={styles.locationContainer}>
+                  <Button
+                    light
+                    style={styles.submitBtn}
+                    onPress={this.submitHandler}
+                  >
+                    <Text style={styles.submitBtnText}>Post the Task</Text>
+                  </Button>
+                </View>
               </Form>
             </ScrollView>
           </View>
@@ -257,11 +514,11 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     width: Dimensions.get("window").width / 7,
     height: Dimensions.get("window").width / 7,
-    borderColor: terColor,
+    borderColor: priColor,
     padding: 0
   },
   activeServiceBtn: {
-    backgroundColor: terColor
+    backgroundColor: priColor
   },
   iconContainer: {
     alignItems: "center",
@@ -284,12 +541,34 @@ const styles = StyleSheet.create({
     color: secColor
   },
   formContainer: {
-    padding: 10
+    paddingLeft: 10,
+    paddingRight: 10
   },
   inputContainer: {
     borderColor: priColor,
     borderRadius: 10,
-    marginTop: 20
+    marginTop: 5
+  },
+  locationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 5
+  },
+  locationBtn: {
+    borderWidth: 1,
+    borderColor: priColor,
+    width: "100%",
+    borderRadius: 10
+  },
+  submitBtn: {
+    backgroundColor: priColor,
+    borderRadius: 10,
+    width: "100%",
+    justifyContent: "center",
+    marginTop: 5
+  },
+  submitBtnText: {
+    color: "white"
   }
 });
 

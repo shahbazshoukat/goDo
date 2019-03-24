@@ -9,8 +9,42 @@ class OTP extends Component {
   };
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      otp: {
+        value: "",
+        valid: false,
+        errorMessage: ""
+      }
+    };
   }
+
+  submitHandler = () => {
+    if (this.state.otp.valid) {
+      this.props.navigation.navigate("Signup");
+    }
+  };
+
+  otpChangeHandler = val => {
+    otp = /^\d{4}$/;
+    this.setState({
+      otp: {
+        value: val
+      }
+    });
+    if (otp.test(val)) {
+      this.setState({
+        otp: {
+          valid: true
+        }
+      });
+    } else {
+      this.setState({
+        otp: {
+          valid: false
+        }
+      });
+    }
+  };
   render() {
     return (
       <Content>
@@ -32,12 +66,19 @@ class OTP extends Component {
               <TextInput
                 style={styles.input}
                 placeholder="4 digit OTP code"
-                keyboardType="phone-pad"
-                maxLength={11}
+                keyboardType="number-pad"
+                maxLength={4}
+                onChangeText={text => {
+                  this.otpChangeHandler(text);
+                }}
               />
             </View>
             <View style={styles.loginContainer}>
-              <Button style={styles.btnLogin}>
+              <Button
+                style={styles.btnLogin}
+                onPress={this.submitHandler}
+                disabled={!this.state.otp.valid}
+              >
                 <Text style={{ color: "white" }}>Verify Number</Text>
               </Button>
             </View>
